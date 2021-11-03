@@ -3,7 +3,7 @@ const Top5List = require('../models/top5list-model');
 createTop5List = (req, res) => {
     const body = req.body;
     if (!body) {
-        return res.status(400).json({
+        return res.status(301).json({
             success: false,
             error: 'You must provide a Top 5 List',
         })
@@ -12,7 +12,7 @@ createTop5List = (req, res) => {
     const top5List = new Top5List(body);
     console.log("creating top5List: " + JSON.stringify(top5List));
     if (!top5List) {
-        return res.status(400).json({ success: false, error: err })
+        return res.status(302).json({ success: false, error: err })
     }
 
     top5List
@@ -25,7 +25,7 @@ createTop5List = (req, res) => {
             })
         })
         .catch(error => {
-            return res.status(400).json({
+            return res.status(303).json({
                 error,
                 message: 'Top 5 List Not Created!'
             })
@@ -36,7 +36,7 @@ updateTop5List = async (req, res) => {
     const body = req.body
     console.log("updateTop5List: " + JSON.stringify(body));
     if (!body) {
-        return res.status(400).json({
+        return res.status(306).json({
             success: false,
             error: 'You must provide a body to update',
         })
@@ -90,7 +90,7 @@ deleteTop5List = async (req, res) => {
 getTop5ListById = async (req, res) => {
     await Top5List.findById({ _id: req.params.id }, (err, list) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err });
+            return res.status(304).json({ success: false, error: err });
         }
         return res.status(200).json({ success: true, top5List: list })
     }).catch(err => console.log(err))
@@ -98,7 +98,7 @@ getTop5ListById = async (req, res) => {
 getTop5Lists = async (req, res) => {
     await Top5List.find({}, (err, top5Lists) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(305).json({ success: false, error: err })
         }
         if (!top5Lists.length) {
             return res
@@ -111,7 +111,7 @@ getTop5Lists = async (req, res) => {
 getTop5ListPairs = async (req, res) => {
     await Top5List.find({ }, (err, top5Lists) => {
         if (err) {
-            return res.status(400).json({ success: false, error: err })
+            return res.status(307).json({ success: false, error: err })
         }
         if (!top5Lists) {
             console.log("!top5Lists.length");

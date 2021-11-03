@@ -42,7 +42,7 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.getLoggedIn = async function () {
+    auth.getLoggedIn = async function (userData,store) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
             authReducer({
@@ -56,6 +56,7 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(userData, store) {
+        console.log(userData);
         const response = await api.registerUser(userData);      
         if (response.status === 200) {
             authReducer({
@@ -67,6 +68,18 @@ function AuthContextProvider(props) {
             history.push("/");
             store.loadIdNamePairs();
         }
+    }
+    auth.loginUser = async function(loginInfo, store){
+        console.log("login: ");//scrap
+        console.log(loginInfo);
+        const response = await api.loginUser(loginInfo);//LOGIN USER RETURNS USE IF VALID PASSWORD WORKS, ERROR IF NOT      
+        console.log(response);
+        //if (response.status === 200) {
+        //    console.log(response);
+        //}else{
+        //    console.log("wrong");
+        //}
+
     }
 
     return (

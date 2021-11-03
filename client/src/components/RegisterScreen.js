@@ -15,7 +15,7 @@ import { GlobalStoreContext } from '../store'
 
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
-    const { store } = useContext(GlobalStoreContext)
+    const { store } = useContext(GlobalStoreContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
