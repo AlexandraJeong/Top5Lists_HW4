@@ -46,7 +46,7 @@ function AuthContextProvider(props) {
         const response = await api.getLoggedIn();
         if (response.status === 200) {
             authReducer({
-                type: AuthActionType.SET_LOGGED_IN,
+                type: AuthActionType.GET_LOGGED_IN,
                 payload: {
                     loggedIn: response.data.loggedIn,
                     user: response.data.user
@@ -56,7 +56,6 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(userData, store) {
-        console.log(userData);
         const response = await api.registerUser(userData);      
         if (response.status === 200) {
             authReducer({
@@ -70,16 +69,25 @@ function AuthContextProvider(props) {
         }
     }
     auth.loginUser = async function(loginInfo, store){
-        console.log("login: ");//scrap
-        console.log(loginInfo);
         const response = await api.loginUser(loginInfo);//LOGIN USER RETURNS USE IF VALID PASSWORD WORKS, ERROR IF NOT      
+        //response = await auth.getLoggedIn(response.data.user);
         console.log(response);
-        //if (response.status === 200) {
-        //    console.log(response);
-        //}else{
-        //    console.log("wrong");
-        //}
-
+        console.log("logged in: ");
+            console.log(response.data.loggedIn);
+            console.log("user: ");
+            console.log(response.data.user);
+            console.log("wow"); 
+        if (response.status === 200) {
+            authReducer({
+                type: AuthActionType.GET_LOGGED_IN,
+                payload: {
+                    loggedIn: response.data.loggedIn,
+                    user: response.data.user
+                }
+            });
+            history.push("/");
+            store.loadIdNamePairs();
+        }
     }
 
     return (

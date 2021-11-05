@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs')
 getLoggedIn = async (req, res) => {
     auth.verify(req, res, async function () {
         const loggedInUser = await User.findOne({ _id: req.userId });
+        console.log(loggedInUser);
         return res.status(200).json({
             loggedIn: true,
             user: {
@@ -16,10 +17,8 @@ getLoggedIn = async (req, res) => {
     })
 }
 
-loginUser = async (req, res) =>{
-    console.log("body: ");
-    console.log(req.query.email);//scrap
-    try{
+loginUser = async (req, res) => {
+    try {
         let email = req.query.email;
         let password = req.query.password;
         if (!email || !password) {
@@ -28,29 +27,29 @@ loginUser = async (req, res) =>{
                 .json({ errorMessage: "Please enter all required fields." });
         }
         const existingUser = await User.findOne({ email: email });
-        if(bcrypt.compare(password, existingUser.passwordHash)){
-            console.log("able to log in");//scrap
-            console.log(existingUser);
-            await res.cookie("token", token, {
-                httpOnly: true,
-                secure: true,
-                sameSite: "none"
-            }).status(200).json({
-                success: true,
-                user: {
-                    firstName: existingUser.firstName,
-                    lastName: existingUser.lastName,
-                    email: existingUser.email
-                }
-            }).send();//RETURING CORRECT USER
-        }else{
-            console.log("error");//scrap
-            return res
-                .status(309)
-                .json({
-                    success: false,
-                    errorMessage: "Incorrect password/email."
-                });
+        console.log("password: ");
+        console.log(password);
+        console.log("hash: ");
+        console.log(existingUser.passwordHash);
+        let response =  await bcrypt.compare(password, existingUser.passwordHash);
+        console.log("should be true: ");
+        console.log(response);
+        if (response) {
+            const token = auth.signToken(existingUser);
+
+        await res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        }).status(200).json({
+            success: true,
+            loggedIn: true,
+            user: {
+                firstName: existingUser.firstName,
+                lastName: existingUser.lastName,
+                email: existingUser.email
+            }
+        }).send();
         }
     } catch (err) {
         console.error(err);
