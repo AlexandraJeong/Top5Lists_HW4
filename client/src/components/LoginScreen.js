@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useContext } from 'react';
 import AuthContext from '../auth';
+import Modal from '@mui/material/Modal';
+import Alert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -42,7 +44,11 @@ export default function LoginScreen() {
         password: formData.get('password')
     }, store);
   };
+  function handleClick(event){
+      event.stopPropagation();
+      auth.closeModal();
 
+  }
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
@@ -127,6 +133,19 @@ export default function LoginScreen() {
           </Box>
         </Grid>
       </Grid>
+      <Modal
+        open={auth.isError}
+        >
+        <Box sx={{
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width:300}}>
+            <Alert severity="error">{auth.errorMessage}<Button class ="modal-button" onClick={handleClick}>X</Button></Alert>
+            
+        </Box>
+      </Modal>
     </ThemeProvider>
   );
 }

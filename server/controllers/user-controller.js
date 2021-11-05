@@ -31,25 +31,26 @@ loginUser = async (req, res) => {
         console.log(password);
         console.log("hash: ");
         console.log(existingUser.passwordHash);
-        let response =  await bcrypt.compare(password, existingUser.passwordHash);
-        console.log("should be true: ");
-        console.log(response);
+        let response = await bcrypt.compare(password, existingUser.passwordHash);
         if (response) {
             const token = auth.signToken(existingUser);
 
-        await res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "none"
-        }).status(200).json({
-            success: true,
-            loggedIn: true,
-            user: {
-                firstName: existingUser.firstName,
-                lastName: existingUser.lastName,
-                email: existingUser.email
-            }
-        }).send();
+            await res.cookie("token", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "none"
+            }).status(200).json({
+                success: true,
+                loggedIn: true,
+                user: {
+                    firstName: existingUser.firstName,
+                    lastName: existingUser.lastName,
+                    email: existingUser.email
+                }
+            }).send();
+        }else{
+            return res.status(303).json({
+                errorMessage: 'Email or password is invalid.'});
         }
     } catch (err) {
         console.error(err);

@@ -8,13 +8,16 @@ console.log("create AuthContext: " + AuthContext);
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    ERROR_MODAL: "ERROR_MODAL"
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        isError: false,
+        errorMessage: null
     });
     const history = useHistory();
 
@@ -28,18 +31,40 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn
+                    loggedIn: payload.loggedIn,
+                    isError: false,
+                    errorMessage: null
                 });
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    isError: false,
+                    errorMessage: null
+                })
+            }
+            case AuthActionType.ERROR_MODAL: {
+                return setAuth({
+                    user: auth.user,
+                    loggedIn: true,
+                    isError: payload.isError,
+                    errorMessage: payload.errorMessage
                 })
             }
             default:
                 return auth;
         }
+    }
+
+    auth.closeModal = function(){
+        authReducer({
+            type: AuthActionType.ERROR_MODAL,
+            payload: {
+                isError: false,
+                errorType: null
+            }
+        });
     }
 
     auth.getLoggedIn = async function (userData,store) {
@@ -56,6 +81,7 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(userData, store) {
+        try{
         const response = await api.registerUser(userData);      
         if (response.status === 200) {
             authReducer({
@@ -67,16 +93,21 @@ function AuthContextProvider(props) {
             history.push("/");
             store.loadIdNamePairs();
         }
+    }catch(error){
+        console.log(error.response.data);
+        authReducer({
+            type: AuthActionType.ERROR_MODAL,
+            payload: {
+                isError: true,
+                errorMessage: error.response.data.errorMessage
+            }
+        });
+    }
     }
     auth.loginUser = async function(loginInfo, store){
+        try{
         const response = await api.loginUser(loginInfo);//LOGIN USER RETURNS USE IF VALID PASSWORD WORKS, ERROR IF NOT      
-        //response = await auth.getLoggedIn(response.data.user);
         console.log(response);
-        console.log("logged in: ");
-            console.log(response.data.loggedIn);
-            console.log("user: ");
-            console.log(response.data.user);
-            console.log("wow"); 
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,
@@ -88,6 +119,15 @@ function AuthContextProvider(props) {
             history.push("/");
             store.loadIdNamePairs();
         }
+    }catch(error){
+        authReducer({
+            type: AuthActionType.ERROR_MODAL,
+            payload: {
+                isError: true,
+                errorMessage: error.response.data.errorMessage
+            }
+        });
+    }
     }
 
     return (
