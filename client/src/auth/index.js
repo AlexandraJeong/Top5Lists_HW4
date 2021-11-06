@@ -47,7 +47,7 @@ function AuthContextProvider(props) {
             case AuthActionType.ERROR_MODAL: {
                 return setAuth({
                     user: auth.user,
-                    loggedIn: true,
+                    loggedIn: false,
                     isError: payload.isError,
                     errorMessage: payload.errorMessage
                 })
@@ -77,6 +77,20 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             });
+        }
+    }
+
+    auth.logoutUser = async function(){
+        const response = await api.logoutUser();
+        if (response.status === 200) {
+            authReducer({
+                type: AuthActionType.GET_LOGGED_IN,
+                payload: {
+                    user: null,
+                    loggedIn: false
+                }
+            })
+            history.push("/");
         }
     }
 

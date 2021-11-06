@@ -50,14 +50,21 @@ loginUser = async (req, res) => {
             }).send();
         }else{
             return res.status(303).json({
-                errorMessage: 'Email or password is invalid.'});
+                errorMessage: 'Password is invalid.'});
         }
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({
+            errorMessage: 'Email is invalid.'
+        }).send();
     }
 }
-
+logoutUser = async (req, res) =>{
+    res.clearCookie("token");
+    return res.status(200).json({
+        message: 'logged out successfully'
+    });
+}
 registerUser = async (req, res) => {
     try {
         const { firstName, lastName, email, password, passwordVerify } = req.body;
@@ -123,5 +130,6 @@ registerUser = async (req, res) => {
 module.exports = {
     getLoggedIn,
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 }
