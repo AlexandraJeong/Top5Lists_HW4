@@ -108,7 +108,6 @@ function AuthContextProvider(props) {
             store.loadIdNamePairs();
         }
     }catch(error){
-        console.log(error.response.data);
         authReducer({
             type: AuthActionType.ERROR_MODAL,
             payload: {
@@ -121,7 +120,6 @@ function AuthContextProvider(props) {
     auth.loginUser = async function(loginInfo, store){
         try{
         const response = await api.loginUser(loginInfo);//LOGIN USER RETURNS USE IF VALID PASSWORD WORKS, ERROR IF NOT      
-        console.log(response);
         if (response.status === 200) {
             authReducer({
                 type: AuthActionType.GET_LOGGED_IN,

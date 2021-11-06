@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs')
 getLoggedIn = async (req, res) => {
     auth.verify(req, res, async function () {
         const loggedInUser = await User.findOne({ _id: req.userId });
-        console.log(loggedInUser);
         return res.status(200).json({
             loggedIn: true,
             user: {
@@ -27,10 +26,6 @@ loginUser = async (req, res) => {
                 .json({ errorMessage: "Please enter all required fields." });
         }
         const existingUser = await User.findOne({ email: email });
-        console.log("password: ");
-        console.log(password);
-        console.log("hash: ");
-        console.log(existingUser.passwordHash);
         let response = await bcrypt.compare(password, existingUser.passwordHash);
         if (response) {
             const token = auth.signToken(existingUser);
