@@ -100,6 +100,7 @@ function GlobalStoreContextProvider(props) {
             }
             // PREPARE TO DELETE A LIST
             case GlobalStoreActionType.MARK_LIST_FOR_DELETION: {
+                console.log(payload);//scrap
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: null,
@@ -249,6 +250,7 @@ function GlobalStoreContextProvider(props) {
     // showDeleteListModal, and hideDeleteListModal
     store.markListForDeletion = async function (id) {
         // GET THE LIST
+        console.log("marking for deletion");//scrap
         let response = await api.getTop5ListById(id);
         if (response.data.success) {
             let top5List = response.data.top5List;
@@ -256,6 +258,7 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.MARK_LIST_FOR_DELETION,
                 payload: top5List
             });
+            //console.log(store.listMarkedForDeletion);//scrap
         }
     }
 
@@ -264,6 +267,7 @@ function GlobalStoreContextProvider(props) {
         if (response.data.success) {
             store.loadIdNamePairs();
             history.push("/");
+            store.unmarkListForDeletion();
         }
     }
 
@@ -283,7 +287,6 @@ function GlobalStoreContextProvider(props) {
     // FUNCTIONS ARE setCurrentList, addMoveItemTransaction, addUpdateItemTransaction,
     // moveItem, updateItem, updateCurrentList, undo, and redo
     store.setCurrentList = async function (id) {
-        console.log(auth.user.email);//scrap
         let response = await api.getTop5ListById(id,auth.user.email);
         if (response.data.success) {
             let top5List = response.data.top5List;

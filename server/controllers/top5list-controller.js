@@ -48,7 +48,7 @@ updateTop5List = async (req, res) => {
         console.log("top5List found: " + JSON.stringify(top5List));
         if (err) {
             return res.status(404).json({
-                err,//
+                err,
                 message: 'Top 5 List not found!',
             })
         }
@@ -78,7 +78,7 @@ updateTop5List = async (req, res) => {
 deleteTop5List = async (req, res) => {
     let currentUser = await Users.findOne({_id: req.userId});
     Top5List.findById({ _id: req.params.id }, (err, top5List) => {
-        if (err||currentUser.email != list.ownerEmail) {
+        if (err||currentUser.email != top5List.ownerEmail) {
             return res.status(404).json({
                 err,
                 message: 'Top 5 List not found!',

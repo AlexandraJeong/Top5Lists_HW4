@@ -26,4 +26,4 @@ export {
     SplashScreen,
     Statusbar, 
     Top5Item, 
-    WorkspaceScreen }
+    WorkspaceScreen}
