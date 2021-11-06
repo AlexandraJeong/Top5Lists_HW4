@@ -53,6 +53,8 @@ function Top5Item(props) {
             let id = parseInt(event.target.id.substring("item-".length))-1;
             store.addUpdateItemTransaction(index,text);
             setEditActive(false);
+            store.setIsItemEditInactive();
+            console.log(store.hasUndo());//scrap
         }// index, newtext
     }
 
@@ -67,8 +69,8 @@ function Top5Item(props) {
         itemClass = "top5-item-dragged-to";
     }
     function handleClick(event) {
-        console.log("wow");//scrap
         event.stopPropagation();
+        store.setIsItemEditActive();
         setEditActive(true);
     }
     if (!editActive) {
